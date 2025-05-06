@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "serve dist -s -n -L -p $PORT"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
@@ -39,6 +40,7 @@
     "react-hook-form": "^7.52.1",
     "react-router-dom": "^6.24.0",
     "react-slick": "^0.30.2",
+    "serve": "^14.2.4",
     "slick-carousel": "^1.8.1",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
