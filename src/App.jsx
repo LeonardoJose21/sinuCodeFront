@@ -66,7 +66,7 @@ function App() {
      }
 
     try {
-            console.log('Token found. Attempting to fetch user data...');
+            console.log('Token found. Attempting to fetch user data...'+import.meta.env.VITE_API_URL + 'api/user/');
       const response = await axios.get(import.meta.env.VITE_API_URL + 'api/user/', {
         headers: {
         'Content-Type': 'application/json',
