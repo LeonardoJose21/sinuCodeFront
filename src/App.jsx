@@ -67,7 +67,7 @@ function App() {
 
     try {
             // console.log(import.meta.env.VITE_API_URL + 'api/user/');
-      const response = await axios.get(import.meta.env.VITE_API_URL + 'api/user/', {
+      const response = await axios.get('https://sinucode-production.up.railway.app/' + 'api/user/', {
         headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
