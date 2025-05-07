@@ -66,7 +66,7 @@ function App() {
      }
 
     try {
-      const response = await axios.get(import.meta.env.VITE_API_URL + 'api/user/', {
+      const response = await axios.get('https://sinucode.onrender.com/' + 'api/user/', {
         headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
