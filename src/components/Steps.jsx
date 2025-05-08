@@ -304,7 +304,7 @@ export default function Steps() {
                             <Solution
                                 provided={provided}
                                 snapshot={snapshot}
-                                solution={solution}
+                                solution_={solution}
                                 setSolution={setSolution}
                                 verifySolution={verifySolution}
                             />
