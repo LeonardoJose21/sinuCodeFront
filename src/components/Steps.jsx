@@ -113,7 +113,7 @@ export default function Steps() {
     const verifySolution = async (setLoading) => {
         setLoading(true);
         try {
-            const response = await axios.post(import.meta.env.VITE_API_URL + '/playground/api/verify-solution/', {
+            const response = await axios.post(import.meta.env.VITE_API_URL + 'playground/api/verify-solution/', {
                 script: solution,
                 language: language
             });
@@ -122,7 +122,7 @@ export default function Steps() {
 
             if (selectedProblem === null) {
                 try {
-                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/playground/api/save-written-problem/`,
+                    const response = await axios.post(`${import.meta.env.VITE_API_URL}playground/api/save-written-problem/`,
                         {
 
                             problema: writtenProblem,   // assuming problem.problema is the written text
@@ -152,7 +152,7 @@ export default function Steps() {
             if (response.data.status === 'success') {
                 try {
                     console.log(problemId);
-                    await axios.post(`${import.meta.env.VITE_API_URL}/playground/api/save-verified-problem/`, {
+                    await axios.post(`${import.meta.env.VITE_API_URL}playground/api/save-verified-problem/`, {
                         problema_id: problemId,
                         solucion: solution,
                         retroalimentacion: feedback, // From ChatGPT response

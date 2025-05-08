@@ -25,7 +25,7 @@ export default function Problem() {
 
     useEffect(() => {
 
-        fetch(import.meta.env.VITE_API_URL + '/playground/get_problems/')
+        fetch(import.meta.env.VITE_API_URL + 'playground/get_problems/')
             .then(response => response.json())
             .then(data => setCodingProblems(data));
         // Filter problems based on selected difficulty and topic
