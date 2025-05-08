@@ -85,7 +85,7 @@ export default function Steps() {
         if (!result.destination) {
             return;
         }
-
+        console.log(" compara: "+result.destination.droppableI)
         if (result.destination.droppableId === 'solution') {
             let prompt;
             setSolution('Cargando Código. Sea paciente...');
