@@ -264,7 +264,7 @@ export default function Steps() {
 
                 {/* Drag and Drop area */}
                 <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="solucion">
+                    <Droppable droppableId="steps">
                         {(provided, snapshot) => (
                             <div
                                 {...provided.droppableProps}

@@ -8,7 +8,7 @@ import { useProblemContext } from '../ProblemContext';
 import { Loader } from 'lucide-react';
 
 
-const Solution = ({ provided, snapshot, solution_, setSolution, verifySolution }) => {
+const Solution = ({ provided, snapshot, solution, setSolution, verifySolution }) => {
     const { language, selectedProblem, writtenProblem, solution} = useProblemContext();
     const [loading, setLoading] = useState(false); 
 
@@ -48,7 +48,7 @@ const Solution = ({ provided, snapshot, solution_, setSolution, verifySolution }
             </div>
 
             <CodeMirror
-                value={solution_}
+                value={solution}
                 height="200px"
                 theme={oneDark}
                 extensions={[javascript(), EditorView.lineWrapping]}
