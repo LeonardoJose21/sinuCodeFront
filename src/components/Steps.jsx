@@ -85,15 +85,17 @@ export default function Steps() {
         if (!result.destination) {
             return;
         }
-        console.log(" compara: "+result.destination.droppableI)
         if (result.destination.droppableId === 'solution') {
             let prompt;
             setSolution('Cargando Código. Sea paciente...');
             const draggedStep = steps[result.source.index];
+
+            const basePrompt = `Convierte el siguiente paso a código en ${language}: "${draggedStep.content}". Utiliza variables y comentarios en español. Emplea soluciones sencillas, claras y apropiadas para principiantes.`;
+
             if (solution.length === 0) {
-                prompt = `Convert the following step to ${language} code: ${draggedStep.content}. Comments and variables must be in Spanish. Use simple solutions.`;
+                prompt = `${basePrompt} Solo proporciona el código correspondiente a este paso. No incluyas explicaciones ni bloques multilínea como docstrings.`;
             } else {
-                prompt = `Convert the following step to ${language} code: ${draggedStep.content}. Comments and variables must be in Spanish. Use simple solutions. The user already has this code: ${solution}. Ensure your answer combines properly with the previous code. In other words, your answer must be the previous code plus the new one. *Provide only the code from the beginning up to the current step without revealing the entire solution unless it's the final step*. Plus, never give the code inside multilines docstrings`;
+                prompt = `${basePrompt} Ya se ha generado este código anteriormente:\n\n${solution}\n\nTu respuesta debe continuar este código de forma coherente, combinándolo correctamente. Proporciona solo el código resultante completo hasta el paso actual (desde el inicio hasta este punto), sin incluir toda la solución completa si no es el último paso. Evita cualquier texto explicativo o uso de docstrings.`;
             }
 
             const response = await getChatGptResponse(prompt);
