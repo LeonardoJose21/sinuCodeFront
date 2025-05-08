@@ -32,21 +32,30 @@ const CodeVisualization = () => {
 
         // Generate a unique ID for the SVG element
         const svgId = `mermaid-svg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        let attempts = 0;
+        const renderMermaidDiagram = () => {
+          mermaid.render(svgId, mermaidDefinition)
+            .then(({ svg, bindFunctions }) => {
+              container.innerHTML = svg; // Inject the generated SVG
 
-        // Use mermaid.render to generate the SVG and inject it into the container
-        mermaid.render(svgId, mermaidDefinition)
-          .then(({ svg, bindFunctions }) => {
-            container.innerHTML = svg; // Inject the generated SVG
+              // If there are interactive elements (like links), bind functions
+              if (bindFunctions) {
+          bindFunctions(container);
+              }
+            })
+            .catch(error => {
+              attempts++;
+              if (attempts < 3) {
+          console.warn(`Retrying Mermaid rendering (attempt ${attempts})...`);
+          renderMermaidDiagram(); // Retry rendering
+              } else {
+          console.error('Error rendering Mermaid diagram after 3 attempts:', error);
+          container.innerHTML = `<pre style="color: red;">Error rendering diagram: ${error.message}</pre>`;
+              }
+            });
+        };
 
-            // If there are interactive elements (like links), bind functions
-            if (bindFunctions) {
-              bindFunctions(container);
-            }
-          })
-          .catch(error => {
-            console.error('Error rendering Mermaid diagram:', error);
-            container.innerHTML = `<pre style="color: red;">Error rendering diagram: ${error.message}</pre>`;
-          });
+        renderMermaidDiagram(); // Initial attempt to render the diagram
 
       } catch (error) {
         console.error('Unexpected error in Mermaid effect:', error);
