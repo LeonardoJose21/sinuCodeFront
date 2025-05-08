@@ -17,7 +17,7 @@ export default function Home() {
           <Steps />
           <CodeVisualization />
           <FeedbackSection />
-          <footer className="p-6 bg-slate-900 text-white text-center">
+          <footer className="p-6 mt-5 bg-slate-900 text-white text-center">
             <p>&copy; 2025 SinúCode. Todos los derechos reservados.</p>
           </footer>
         </div>
