@@ -48,7 +48,7 @@ const Solution = ({ provided, snapshot, solution_, setSolution, verifySolution }
             </div>
 
             <CodeMirror
-                value={solution_}
+                value={solution}
                 height="200px"
                 theme={oneDark}
                 extensions={[javascript(), EditorView.lineWrapping]}
