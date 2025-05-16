@@ -171,7 +171,7 @@ export default function Steps() {
             }
 
 
-            if (response.data.status === 'success') {
+            if (response_sol.data.status === 'success') {
                 try {
                     console.log("id:"+problemId + " solucion:"+ solution+" feedback:" + feedback);
                     await axios.post(`${import.meta.env.VITE_API_URL}playground/api/save-verified-problem/`, {
