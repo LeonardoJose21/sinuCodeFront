@@ -161,9 +161,9 @@ export default function Steps() {
 
                             Tu respuesta debe estar escrita como un solo párrafo, usando un lenguaje sencillo y amigable, ideal para alguien que está empezando a aprender a programar.`
             try {
-                const response = await getChatGptResponse(prompt);
+                const response_feedback = await getChatGptResponse(prompt);
 
-                setFeedback(response.choices[0].message.content)
+                setFeedback(response_feedback.choices[0].message.content)
 
             } catch (error) {
                 console.error('Error generating feedback:', error);

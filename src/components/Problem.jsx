@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 
 export default function Problem() {
     const { writtenProblem, setWrittenProblem, selectedProblem, setSelectedProblem, language, setLanguage } = useProblemContext();
-    const [problemType, setProblemType] = useState('write');
+    const [problemType, setProblemType] = useState('select');
     const [difficulty, setDifficulty] = useState('facil');
     const [topic, setTopic] = useState('');
     const [filteredProblems, setFilteredProblems] = useState([]);
