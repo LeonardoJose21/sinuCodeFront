@@ -36,7 +36,7 @@ export default function Problem() {
         });
         setFilteredProblems(filtered);
         // console.log(filtered.length);
-    }, [problemType, difficulty, topic, language]);
+    }, []);
 
     const onSelectProblem = (value, problems) => {
         setProblemType(value);
