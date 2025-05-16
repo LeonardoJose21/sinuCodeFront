@@ -150,6 +150,25 @@ export default function Steps() {
                 problemId = selectedProblem.id;
             }
 
+            const prompt = `Eres un asistente experto en programación que ayuda a estudiantes principiantes. 
+                            Analiza el siguiente código escrito por un estudiante: '${solution}' y compáralo con la solución esperada: '${verificationResult}'. 
+
+                            Proporciona retroalimentación clara y útil en español. 
+
+                            - Si el código es correcto, felicita al estudiante brevemente, explica por qué su lógica es adecuada y menciona qué partes del código están bien estructuradas.
+                            - Si hay errores o aspectos por mejorar, identifica los problemas claramente y ofrece sugerencias concretas para corregirlos o mejorar el enfoque.
+                            - También puedes proponer una solución alternativa con una lógica diferente si crees que es útil para el aprendizaje.
+
+                            Tu respuesta debe estar escrita como un solo párrafo, usando un lenguaje sencillo y amigable, ideal para alguien que está empezando a aprender a programar.`
+            try {
+                const response = await getChatGptResponse(prompt);
+
+                setFeedback(response.choices[0].message.content)
+
+            } catch (error) {
+                console.error('Error generating feedback:', error);
+            }
+
 
             if (response.data.status === 'success') {
                 try {
@@ -157,7 +176,7 @@ export default function Steps() {
                     await axios.post(`${import.meta.env.VITE_API_URL}playground/api/save-verified-problem/`, {
                         problema_id: problemId,
                         solucion: solution,
-                        retroalimentacion: feedback, // From ChatGPT response
+                        retroalimentacion: feedback || "No hubo feedback", // From ChatGPT response
                     }, {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
@@ -175,24 +194,6 @@ export default function Steps() {
             setVerificationResult('Ha ocurrido un  error. Intente de nuevo.');
         } finally {
             setLoading(false);
-            const prompt = `Eres un asistente experto en programación que ayuda a estudiantes principiantes. 
-                            Analiza el siguiente código escrito por un estudiante: '${solution}' y compáralo con la solución esperada: '${verificationResult}'. 
-
-                            Proporciona retroalimentación clara y útil en español. 
-
-                            - Si el código es correcto, felicita al estudiante brevemente, explica por qué su lógica es adecuada y menciona qué partes del código están bien estructuradas.
-                            - Si hay errores o aspectos por mejorar, identifica los problemas claramente y ofrece sugerencias concretas para corregirlos o mejorar el enfoque.
-                            - También puedes proponer una solución alternativa con una lógica diferente si crees que es útil para el aprendizaje.
-
-                            Tu respuesta debe estar escrita como un solo párrafo, usando un lenguaje sencillo y amigable, ideal para alguien que está empezando a aprender a programar.`
-            try {
-                const response = await getChatGptResponse(prompt);
-
-                setFeedback(response.choices[0].message.content)
-
-            } catch (error) {
-                console.error('Error generating hint:', error);
-            }
         }
     };
 
