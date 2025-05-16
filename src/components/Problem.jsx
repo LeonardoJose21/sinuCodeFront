@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 
 export default function Problem() {
     const { writtenProblem, setWrittenProblem, selectedProblem, setSelectedProblem, language, setLanguage } = useProblemContext();
-    const [problemType, setProblemType] = useState('select');
+    const [problemType, setProblemType] = useState('write');
     const [difficulty, setDifficulty] = useState('facil');
     const [topic, setTopic] = useState('');
     const [filteredProblems, setFilteredProblems] = useState([]);
@@ -36,11 +36,11 @@ export default function Problem() {
         });
         setFilteredProblems(filtered);
         // console.log(filtered.length);
-    }, []);
+    }, [problemType, difficulty, topic, language]);
 
     const onSelectProblem = (value, problems) => {
         setProblemType(value);
-        // setSelectedProblem(null); // Reset selectedProblem when changing problem type
+        setSelectedProblem(null); // Reset selectedProblem when changing problem type
     }
 
     return (
