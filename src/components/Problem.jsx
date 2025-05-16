@@ -40,7 +40,7 @@ export default function Problem() {
 
     const onSelectProblem = (value, problems) => {
         setProblemType(value);
-        setSelectedProblem(null); // Reset selectedProblem when changing problem type
+        // setSelectedProblem(null); // Reset selectedProblem when changing problem type
     }
 
     return (
