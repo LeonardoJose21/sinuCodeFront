@@ -54,6 +54,7 @@ export default function Steps() {
     const [hintUsed, setHintUsed] = useState(false);
     const [steps, setSteps] = useState(getItems(0));
     const [feedback, setFeedback] = useState('');
+    let feedback_ = null; // Store feedback if needed
     let problemId = null // Store the problem ID if needed
 
 
@@ -115,12 +116,12 @@ export default function Steps() {
     const verifySolution = async (setLoading) => {
         setLoading(true);
         try {
-            const response = await axios.post(import.meta.env.VITE_API_URL + 'playground/api/verify-solution/', {
+            const response_sol = await axios.post(import.meta.env.VITE_API_URL + 'playground/api/verify-solution/', {
                 script: solution,
                 language: language
             });
 
-            setVerificationResult(response.data.output);
+            setVerificationResult(response_sol.data.output);
 
             if (selectedProblem === null) {
                 try {
@@ -162,7 +163,7 @@ export default function Steps() {
                             Tu respuesta debe estar escrita como un solo párrafo, usando un lenguaje sencillo y amigable, ideal para alguien que está empezando a aprender a programar.`
             try {
                 const response_feedback = await getChatGptResponse(prompt);
-
+                feedback_ = response_feedback.choices[0].message.content;
                 setFeedback(response_feedback.choices[0].message.content)
 
             } catch (error) {
@@ -176,7 +177,7 @@ export default function Steps() {
                     await axios.post(`${import.meta.env.VITE_API_URL}playground/api/save-verified-problem/`, {
                         problema_id: problemId,
                         solucion: solution,
-                        retroalimentacion: feedback || "No hubo feedback", // From ChatGPT response
+                        retroalimentacion: feedback_ || "No hubo feedback", // From ChatGPT response
                     }, {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
