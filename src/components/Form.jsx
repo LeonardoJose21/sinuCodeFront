@@ -196,7 +196,7 @@ const AuthForm = ({ method, route }) => {
       )}
       {method === "login" && (
         <div className="text-sm text-gray-600">
-          <a className='text-blue-500 mb-3' href="/reset-password">¿Olvidó su contraseña?</a>
+          <a className='text-blue-500 mb-3' href="/request-reset">¿Olvidó su contraseña?</a>
           <p>¿No estás registrado? <a
             href={isPersonalAcademicoRe ? "/register/personal-academico" : "/register"}
             className="text-blue-500">Regístrate aquí </a></p>
