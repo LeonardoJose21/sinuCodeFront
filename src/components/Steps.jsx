@@ -100,9 +100,9 @@ export default function Steps() {
             }
 
             const response = await getChatGptResponse(prompt);
-            const code = response.choices[0].message.content;
-
-
+            let code = response.choices[0].message.content;
+            // Remove ```language and ``` from start/end
+            code = code.replace(/```[\s\S]*?\n/, '').replace(/```$/, '');
             setSolution(code);
 
             const newSteps = steps.filter((_, i) => i !== result.source.index);

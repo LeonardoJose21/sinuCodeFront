@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from 'react-router-dom';
 // Import lucide-react icons, including ClipboardList
-import { LogOut, Home, CheckCircle, BarChart, User as UserIcon, ClipboardList } from 'lucide-react';
+import { LogOut, Home, CheckCircle, BarChart, User as UserIcon, ClipboardList, BarChart2, TabletSmartphoneIcon, School } from 'lucide-react';
 
 const Header = ({ user, onLogout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,6 +18,8 @@ const Header = ({ user, onLogout }) => {
   const isLandingPage = location.pathname === '/landing';
   const isLoginPage = location.pathname === '/login';
   const isRegisterPage = location.pathname === '/register';
+  const isPersonalAcademicoPage = location.pathname.includes("personal-academico");
+
 
   // Function to close both menus
   const closeMenus = () => {
@@ -35,7 +37,6 @@ const Header = ({ user, onLogout }) => {
     setIsUserMenuOpen(prevState => !prevState); // Use functional update
     setIsMobileMenuOpen(false); // Close mobile menu
   };
-
   // Close menus on route change
   useEffect(() => {
     closeMenus();
@@ -46,12 +47,12 @@ const Header = ({ user, onLogout }) => {
     const handleClickOutside = (event) => {
       // Check if click is outside mobile menu AND not the burger button
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target) &&
-          mobileMenuButtonRef.current && !mobileMenuButtonRef.current.contains(event.target)) {
+        mobileMenuButtonRef.current && !mobileMenuButtonRef.current.contains(event.target)) {
         setIsMobileMenuOpen(false);
       }
       // Check if click is outside user menu AND not the user button
       if (userMenuRef.current && !userMenuRef.current.contains(event.target) &&
-          userMenuButtonRef.current && !userMenuButtonRef.current.contains(event.target)) {
+        userMenuButtonRef.current && !userMenuButtonRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
       }
     };
@@ -66,7 +67,8 @@ const Header = ({ user, onLogout }) => {
   const activeLinkStyle = "text-green-500 font-bold underline underline-offset-4"; // Style for active links
 
   // Determine which links to show based on login status and page
-  const showNavAndUserInfo = !isLoginPage && !isRegisterPage && user.isLoggedIn === true;
+  const showNavAndUserInfo = !isLoginPage && !isRegisterPage && user.isLoggedIn === true && !isPersonalAcademicoPage
+  const showAcademic = user.isLoggedIn === true && isPersonalAcademicoPage
 
   // Helper component for navigation links
   const NavLinks = ({ isMobile = false }) => (
@@ -97,37 +99,68 @@ const Header = ({ user, onLogout }) => {
         className={`flex items-center text-sm font-semibold hover:text-green-500 transition-colors ${location.pathname === '/solicitud' ? activeLinkStyle : ''}`}
         onClick={isMobile ? closeMenus : undefined}
       >
-         <UserIcon className={`inline-block ${isMobile ? 'mr-3' : 'mr-2'}`} size={isMobile ? 20 : 16} /> Solicitar monitoria
+        <UserIcon className={`inline-block ${isMobile ? 'mr-3' : 'mr-2'}`} size={isMobile ? 20 : 16} /> Solicitar monitoria
       </Link>
       {/* Encuesta Link with Icon */}
       <Link
         to="/encuesta"
         className={`flex items-center text-sm font-semibold hover:text-green-500 transition-colors ${location.pathname === '/encuesta' ? activeLinkStyle : ''}`}
-         onClick={isMobile ? closeMenus : undefined}
+        onClick={isMobile ? closeMenus : undefined}
       >
-         <ClipboardList className={`inline-block ${isMobile ? 'mr-3' : 'mr-2'}`} size={isMobile ? 20 : 16} /> Encuesta
+        <ClipboardList className={`inline-block ${isMobile ? 'mr-3' : 'mr-2'}`} size={isMobile ? 20 : 16} /> Encuesta
       </Link>
     </>
   );
 
+  const NavLinksPersonalA = () => (
+    <>
+      <Link
+        to="/personal-academico/dashboard"
+        className={`flex items-center text-sm font-semibold hover:text-green-500 transition-colors ${location.pathname === '/personal-academico/dashboard' ? activeLinkStyle : ''}`}
+      >
+        <BarChart2 className="inline-block" /> Panel de control
+      </Link>
+      {user.rol === 'monitor' && (
+        <Link
+          to="/personal-academico/monitorias-individuales"
+          className={`flex items-center text-sm font-semibold hover:text-green-500 transition-colors ${location.pathname === '/personal-academico/monitorias-individuales' ? activeLinkStyle : ''}`}
+        >
+          <TabletSmartphoneIcon className="inline-block" /> Ver mis monitorias
+        </Link>
+      )}
+      {user.rol === 'docente' && (
+        <Link
+          to="/personal-academico/monitorias"
+          className={`flex items-center text-sm font-semibold hover:text-green-500 transition-colors ${location.pathname === '/personal-academico/monitorias' ? activeLinkStyle : ''}`}
+        >
+          <School className="inline-block mr-2" /> Ver todas las monitorias
+        </Link>
+      )}
 
+    </>
+  );
   return (
     <header className={`bg-slate-900 text-white p-2 flex items-center justify-between w-full ${isLandingPage ? 'fixed top-0 left-0 w-full z-50' : ''}`}>
 
       {/* Left Section: Logo and Desktop Nav Links */}
       <div className="flex items-center space-x-6"> {/* space-x-6 creates gap between logo and nav start */}
-         {/* Logo */}
-         <Link className="flex items-center space-x-2" to="/landing#hero">
-           <img src="/logo.png" alt="Logo" className="h-12 w-12" />
-           {isLandingPage || isLoginPage || isRegisterPage  &&(<span className="text-2xl font-bold">SinúCode</span>)}
-         </Link>
+        {/* Logo */}
+        <Link className="flex items-center space-x-2" to="/landing#hero">
+          <img src="/logo.png" alt="Logo" className="h-12 w-12" />
+          {isLandingPage || isLoginPage || isRegisterPage && (<span className="text-2xl font-bold">SinúCode</span>)}
+        </Link>
 
-         {/* Desktop Navigation Links */}
-         {showNavAndUserInfo && (
-            <nav className="hidden sm:flex items-center space-x-6"> {/* space-x-6 for links */}
-               <NavLinks />
-            </nav>
-         )}
+        {/* Desktop Navigation Links */}
+        {showNavAndUserInfo && (
+          <nav className="hidden sm:flex items-center space-x-6"> {/* space-x-6 for links */}
+            <NavLinks />
+          </nav>
+        )}
+        {showAcademic && (
+          <nav className="hidden sm:flex items-center space-x-6"> {/* space-x-6 for links */}
+            <NavLinksPersonalA />
+          </nav>
+        )}
       </div>
 
 
@@ -135,7 +168,7 @@ const Header = ({ user, onLogout }) => {
       <div className="flex items-center"> {/* This container aligns right */}
 
         {/* Desktop User Info & Logout Toggle */}
-        {showNavAndUserInfo && user && (
+        {(showNavAndUserInfo || showAcademic) && user && (
           <div className="hidden sm:flex relative" ref={userMenuRef}> {/* Added hidden sm:flex and relative */}
             <button
               ref={userMenuButtonRef} // Attach ref to the button
@@ -154,10 +187,10 @@ const Header = ({ user, onLogout }) => {
               <div className="absolute top-full right-0 mt-2 bg-slate-800 text-white p-3 rounded-lg shadow-lg w-48 z-20 border border-slate-700 animate-fade-in"> {/* Added animation class */}
                 <div className="flex flex-col space-y-3">
                   <div className="text-sm font-medium truncate">{user.name}</div> {/* Truncate long names */}
-                  <div className="text-xs text-gray-400 truncate">{user.career}</div> {/* Truncate long careers */}
-                  <hr className="border-slate-700"/>
+                  <div className="text-xs text-gray-400 truncate">{user.career || user.rol}</div> {/* Truncate long careers */}
+                  <hr className="border-slate-700" />
                   <Button onClick={onLogout} className="text-white bg-red-600 hover:bg-red-700 text-sm justify-center w-full"> {/* Full width button */}
-                     <LogOut className="mr-2" size={16} /> Cerrar Sesión
+                    <LogOut className="mr-2" size={16} /> Cerrar Sesión
                   </Button>
                 </div>
               </div>
@@ -166,65 +199,66 @@ const Header = ({ user, onLogout }) => {
         )}
 
         {/* Mobile Menu Button */}
-          {showNavAndUserInfo && ( // Only show burger if nav links are relevant
-              <button
-                ref={mobileMenuButtonRef} // Attach ref to the button
-                className="sm:hidden text-white p-2 focus:outline-none"
-                onClick={toggleMobileMenu}
-                aria-label={isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
-              >
-                {isMobileMenuOpen ? (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-                ) : (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-                )}
-              </button>
-          )}
+        {showNavAndUserInfo || showAcademic && ( // Only show burger if nav links are relevant
+          <button
+            ref={mobileMenuButtonRef} // Attach ref to the button
+            className="sm:hidden text-white p-2 focus:outline-none"
+            onClick={toggleMobileMenu}
+            aria-label={isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
+          >
+            {isMobileMenuOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            )}
+          </button>
+        )}
 
-          {/* Login/Register Links (Desktop, when not logged in on auth pages) */}
-         {!user && (isLoginPage || isRegisterPage) && (
-             <div className="hidden sm:flex items-center space-x-4">
-                 {isLoginPage && (
-                     <Link to="/register" className="text-green-500 font-semibold hover:underline transition-colors">
-                         Registrarse
-                     </Link>
-                 )}
-                 {isRegisterPage && (
-                     <Link to="/login" className="text-green-500 font-semibold hover:underline transition-colors">
-                         Iniciar Sesión
-                     </Link>
-                 )}
-             </div>
-         )}
+        {/* Login/Register Links (Desktop, when not logged in on auth pages) */}
+        {!user && (isLoginPage || isRegisterPage) && (
+          <div className="hidden sm:flex items-center space-x-4">
+            {isLoginPage && (
+              <Link to="/register" className="text-green-500 font-semibold hover:underline transition-colors">
+                Registrarse
+              </Link>
+            )}
+            {isRegisterPage && (
+              <Link to="/login" className="text-green-500 font-semibold hover:underline transition-colors">
+                Iniciar Sesión
+              </Link>
+            )}
+          </div>
+        )}
 
       </div> {/* End Right Section */}
 
 
       {/* Mobile Menu Dropdown (Absolute Positioned relative to Header) */}
-      {showNavAndUserInfo && ( // Only render mobile menu if nav links are relevant
+      {showNavAndUserInfo || showAcademic && ( // Only render mobile menu if nav links are relevant
         <div
           ref={mobileMenuRef} // Attach ref to the menu div
           className={`sm:hidden absolute top-12 right-0 mt-2 w-48 bg-slate-900 rounded-lg shadow-lg z-20 transform transition-all duration-300 ease-in-out origin-top-right ${isMobileMenuOpen ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible pointer-events-none'}`} // Added 'visible'/'invisible' and removed pointer-events-none when open
         >
           <ul className="flex flex-col space-y-3 p-4 font-semibold">
-            <NavLinks isMobile={true} /> {/* Render navigation links */}
-             {user && ( // Show user info/logout in mobile menu if logged in
-                <>
-                 <hr className="my-2 border-slate-700" />
-                 {/* User info in mobile menu (not clickable, just info) */}
-                 <li className="text-sm font-medium truncate">{user.name}</li>
-                 <li className="text-xs text-gray-400 truncate">{user.career}</li>
-                 <li>
-                    <Button onClick={onLogout} className="text-white bg-red-600 hover:bg-red-700 text-sm w-full justify-center">
-                       <LogOut className="mr-2" size={16} /> Cerrar Sesión
-                    </Button>
-                 </li>
-                </>
-             )}
+            {showNavAndUserInfo &&(<NavLinks isMobile={true} />)} {/* Render navigation links */}
+            {showAcademic && (<NavLinksPersonalA isMobile={true} />)}
+            {user && ( // Show user info/logout in mobile menu if logged in
+              <>
+                <hr className="my-2 border-slate-700" />
+                {/* User info in mobile menu (not clickable, just info) */}
+                <li className="text-sm font-medium truncate">{user.name}</li>
+                <li className="text-xs text-gray-400 truncate">{user.career}</li>
+                <li>
+                  <Button onClick={onLogout} className="text-white bg-red-600 hover:bg-red-700 text-sm w-full justify-center">
+                    <LogOut className="mr-2" size={16} /> Cerrar Sesión
+                  </Button>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       )}

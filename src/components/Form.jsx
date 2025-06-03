@@ -8,22 +8,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../api'; // Adjust the path as necessary
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants'; // Adjust the path as necessary
 import { Loader } from 'lucide-react';
+import { useUser } from '../roleContext';
 
 const AuthForm = ({ method, route }) => {
+  const { setUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [nombre_completo, setNombre] = useState("");
   const [programa_academico, setCarrera] = useState("");
+  const [rol, setRol] = useState("")
   const navigate = useNavigate();
+  const location = useLocation();
   const username = email;
 
   const name = method === "login" ? "Iniciar Sesión" : "Registrarse";
+  const isPersonalAcademicoRe = location.pathname === "/login/personal-academico";
+  const isPersonalAcademico = location.pathname === "/register/personal-academico";
+  const esMonitor = rol == "monitor"
+
 
   const handleSubmit = async (e) => {
     setLoading(true);
@@ -42,7 +50,8 @@ const AuthForm = ({ method, route }) => {
         email,
         password,
       };
-    } else {  // Assuming method === "register"
+    }
+    else if (method == "register" && !isPersonalAcademico) {  // Assuming method === "register"
       payload = {
         user: {
           username,
@@ -55,14 +64,38 @@ const AuthForm = ({ method, route }) => {
         dificultad_predominante: "facil"
       };
     }
+    else {
+      if (esMonitor) {
+        route = route + "-monitor/"
+      }
+      else {
+        route = route + "-docente/"
+      }
+      console.log(route)
+      payload = {
+        user: {
+          username,
+          email,
+          password,
+        },
+        nombre_completo,
+        rol,
+      };
+    }
     // console.log("Payload:", payload);
+   
     try {
 
       const res = await api.post(route, payload);
       if (method === "login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        navigate("/");
+        if (location.pathname.includes("personal-academico")) {
+          navigate("/personal-academico/dashboard")
+        }
+        else {
+          navigate("/");
+        }
       } else {
         navigate("/login");
       }
@@ -127,30 +160,52 @@ const AuthForm = ({ method, route }) => {
             />
           </div>
           <div>
-            <label htmlFor="carrera" className="block text-sm font-medium text-gray-700">Programa académico</label>
-            <Select value={programa_academico} onValueChange={setCarrera} required>
-              <SelectTrigger className="w-full p-2 border rounded bg- text-black">
-                <SelectValue placeholder="Seleccione su programa académico" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Ingenieria de sistemas">Ingeniería de Sistemas</SelectItem>
-                <SelectItem value="Ingenieria industrial">Ingeniería Industrial</SelectItem>
-                <SelectItem value="Ingenieria electromecanica">Ingeniería Electromecánica</SelectItem>
-                <SelectItem value="Ingenieria electrica">Ingeniería Eléctrica</SelectItem>
-                <SelectItem value="Ingenieria civil">Ingeniería Civil</SelectItem>
-              </SelectContent>
-            </Select>
+            {!isPersonalAcademico && (
+              <>
+                <label htmlFor="carrera" className="block text-sm font-medium text-gray-700">Programa académico</label>
+                <Select value={programa_academico} onValueChange={setCarrera} required>
+                  <SelectTrigger className="w-full p-2 border rounded bg- text-black">
+                    <SelectValue placeholder="Seleccione su programa académico" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Ingenieria de sistemas">Ingeniería de Sistemas</SelectItem>
+                    <SelectItem value="Ingenieria industrial">Ingeniería Industrial</SelectItem>
+                    <SelectItem value="Ingenieria electromecanica">Ingeniería Electromecánica</SelectItem>
+                    <SelectItem value="Ingenieria electrica">Ingeniería Eléctrica</SelectItem>
+                    <SelectItem value="Ingenieria civil">Ingeniería Civil</SelectItem>
+                  </SelectContent>
+                </Select>
+              </>
+            )}
+            {isPersonalAcademico && (
+              <>
+                <label htmlFor="rol" className="block text-sm font-medium text-gray-700">Rol</label>
+                <Select value={rol} onValueChange={setRol} required>
+                  <SelectTrigger className="w-full p-2 border rounded bg- text-black">
+                    <SelectValue placeholder="Seleccione su rol (monitor o docente)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="monitor">Monitor</SelectItem>
+                    <SelectItem value="docente">Docente</SelectItem>
+                  </SelectContent>
+                </Select>
+              </>
+            )}
           </div>
         </>
       )}
       {method === "login" && (
         <div className="text-sm text-gray-600">
-          <p>¿No estás registrado? <a href="/register" className="text-blue-500">Regístrate aquí</a></p>
+          <a className='text-blue-500 mb-3' href="/reset-password">¿Olvidó su contraseña?</a>
+          <p>¿No estás registrado? <a
+            href={isPersonalAcademicoRe ? "/register/personal-academico" : "/register"}
+            className="text-blue-500">Regístrate aquí </a></p>
         </div>)}
 
       {method === "register" && (
         <div className="text-sm text-gray-600">
-          <p>¿Ya tienes cuenta? <a href="/login" className="text-blue-500">Inicia sesión aquí</a></p>
+          <p>¿Ya tienes cuenta? <a href={isPersonalAcademico ? "/login/personal-academico" : "/login"}
+            className="text-blue-500">Inicia sesión aquí</a></p>
         </div>
       )}
 

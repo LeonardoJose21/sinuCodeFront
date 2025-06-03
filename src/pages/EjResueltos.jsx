@@ -30,7 +30,7 @@ const SolvedProblemsPage = () => {
     <div className="p-4 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Problemas Resueltos</h2>
       {solvedProblems.length === 0 ? (
-        <p>No hay problemas resueltos aún.</p>
+        <p> Cargando problemas...</p>
       ) : (
         <ul className="space-y-4">
           {solvedProblems.map((problem) => (
